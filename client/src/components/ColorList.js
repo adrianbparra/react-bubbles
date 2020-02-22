@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import {axiosWithAuth} from "../utils/axiosWithAuth";
 
 const initialColor = {
   color: "",
@@ -14,6 +15,7 @@ const ColorList = ({ colors, updateColors }) => {
   const editColor = color => {
     setEditing(true);
     setColorToEdit(color);
+    
   };
 
   const saveEdit = e => {
@@ -21,11 +23,45 @@ const ColorList = ({ colors, updateColors }) => {
     // Make a put request to save your updated color
     // think about where will you get the id from...
     // where is is saved right now?
+
+    axiosWithAuth()
+      .put(`/colors/${colorToEdit.id}`, colorToEdit)
+      .then(res => {
+        console.log(res.data)
+
+        const newColors = colors.map(color => {
+          console.log(color)
+          if(color.id === res.data.id){
+            console.log("found", res.data)
+            return res.data
+            
+          }
+          return color
+        })
+
+
+        console.log(newColors)
+
+        updateColors(
+         newColors 
+        )
+        setEditing(false)
+      })
   };
 
   const deleteColor = color => {
     // make a delete request to delete this color
+    console.log("delete", color)
+    axiosWithAuth()
+    .delete(`/colors/${color.id}`)
+    .then(res => {
+      const newColors = colors.filter(color => color.id !== res.data)
+
+      updateColors(newColors)
+    })
+    .catch(err => console.log(err))
   };
+
 
   return (
     <div className="colors-wrap">
@@ -50,6 +86,8 @@ const ColorList = ({ colors, updateColors }) => {
           </li>
         ))}
       </ul>
+
+
       {editing && (
         <form onSubmit={saveEdit}>
           <legend>edit color</legend>
@@ -80,6 +118,8 @@ const ColorList = ({ colors, updateColors }) => {
           </div>
         </form>
       )}
+
+
       <div className="spacer" />
       {/* stretch - build another form here to add a color */}
     </div>
