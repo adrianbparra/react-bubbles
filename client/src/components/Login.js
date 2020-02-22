@@ -33,11 +33,11 @@ const Login = (props) => {
   }
   
   return (
-    <>
+    <div className="login_page">
       
       <h1>Welcome to the Bubble App!</h1>
-      <p>Find some great colors to design your web application with.</p>
-      <form onSubmit={onLoginSubmit}>
+      <p>Sign in to save some great colors to design your web applications with.</p>
+      <form className="login_form" onSubmit={onLoginSubmit}>
         <input 
           type="username"
           name="username"
@@ -56,7 +56,7 @@ const Login = (props) => {
 
         <button>Login</button>
       </form>
-    </>
+    </div>
   );
 };
 

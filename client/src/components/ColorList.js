@@ -23,6 +23,21 @@ const ColorList = ({ colors, updateColors }) => {
     // Make a put request to save your updated color
     // think about where will you get the id from...
     // where is is saved right now?
+    if(!colorToEdit.id){
+      console.log("no id")
+      
+      axiosWithAuth()
+        .post(`/colors`, colorToEdit)
+        .then(res => {
+          console.log(res)
+          updateColors(res.data)
+          setEditing(false);
+        })
+        .catch(err=> console.log(err))
+      return
+    }
+    
+    console.log("id")
 
     axiosWithAuth()
       .put(`/colors/${colorToEdit.id}`, colorToEdit)
@@ -39,15 +54,15 @@ const ColorList = ({ colors, updateColors }) => {
           return color
         })
 
+        // console.log(newColors)
 
-        console.log(newColors)
-
-        updateColors(
-         newColors 
-        )
-        setEditing(false)
+        updateColors(newColors);
+        setEditing(false);
       })
+      .catch(err => console.log(err))
   };
+
+
 
   const deleteColor = color => {
     // make a delete request to delete this color
@@ -87,10 +102,19 @@ const ColorList = ({ colors, updateColors }) => {
         ))}
       </ul>
 
+      {editing? null : <button onClick={(e)=> {
+        e.preventDefault() 
+        setColorToEdit(initialColor)
+        setEditing(true)}
+      }>
+          Add New Color
+      </button>}
+      
+
 
       {editing && (
         <form onSubmit={saveEdit}>
-          <legend>edit color</legend>
+          <legend>{colorToEdit.id ? "Edit Color" : "Add Color"}</legend>
           <label>
             color name:
             <input
@@ -119,8 +143,10 @@ const ColorList = ({ colors, updateColors }) => {
         </form>
       )}
 
-
-      <div className="spacer" />
+      
+      {/* <div className="spacer" /> */}
+      
+      
       {/* stretch - build another form here to add a color */}
     </div>
   );
